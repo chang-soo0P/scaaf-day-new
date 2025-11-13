@@ -1,0 +1,24 @@
+import { useQuery } from "@tanstack/react-query"
+import { useAuthStore } from "@/lib/auth-store"
+import type { EmailRecord } from "@/lib/mock-database"
+
+export function useEmail(id: string) {
+  const { user } = useAuthStore()
+
+  return useQuery({
+    queryKey: ["email", user?.id, id],
+    queryFn: async (): Promise<EmailRecord> => {
+      if (!user?.id) throw new Error("User not authenticated")
+
+      const response = await fetch(`/api/emails/${id}?user_id=${user.id}`)
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch email")
+      }
+
+      const result = await response.json()
+      return result.data
+    },
+    enabled: !!user?.id && !!id,
+  })
+}
