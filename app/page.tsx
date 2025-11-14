@@ -9,13 +9,14 @@ export default function HomePage() {
   useEffect(() => {
     const host = window.location.hostname;
 
-    // ✅ 운영 도메인에서는 리디렉션 비활성화
     if (host === "scaaf.day" || host === "www.scaaf.day") {
-      console.log("[HomePage] Production domain detected — staying on /coming-soon");
+      // ✅ 운영 도메인 → 로그인 페이지로 이동
+      console.log("[HomePage] Production domain detected — redirecting to /login");
+      router.replace("/login");
       return;
     }
 
-    // ✅ 로컬/프리뷰 환경에서는 온보딩으로 이동 (인증 상태 확인 후)
+    // ✅ 로컬/프리뷰 환경 → 온보딩으로 이동
     console.log("[HomePage] Development environment — redirecting to /onboarding");
     router.replace("/onboarding");
   }, [router]);

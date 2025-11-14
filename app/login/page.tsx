@@ -24,7 +24,7 @@ export default function LoginPage() {
       }
 
       mockLogin(mockUser)
-      // router.push("/digest")
+      // router.push("/dashboard/dev-playground")
     } catch (error) {
       console.error("Mock login error:", error)
     } finally {
@@ -60,7 +60,7 @@ export default function LoginPage() {
   }
 
   const handleContinue = () => {
-    router.push("/digest")
+    router.push("/dashboard/dev-playground")
   }
 
   return (
