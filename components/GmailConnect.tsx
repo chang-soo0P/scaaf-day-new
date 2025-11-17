@@ -56,9 +56,6 @@ export function GmailConnect({ onConnect }: GmailConnectProps) {
           Gmail 연결하기
         </Button>
 
-        <p className="text-xs text-gray-500">
-          Demo 모드: 실제 Gmail 연결 시 Supabase 백엔드가 필요합니다
-        </p>
       </div>
     </div>
   );
