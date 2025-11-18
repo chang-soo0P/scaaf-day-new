@@ -1,3 +1,24 @@
+export const mockDB = {
+  emails: [
+    {
+      id: "1",
+      sender: "hello@scaaf.day",
+      subject: "Scaaf Demo Email",
+      snippet: "Welcome to your demo inbox! 🎉",
+      date: "2025-11-17",
+    },
+    {
+      id: "2",
+      sender: "team@scaaf.day",
+      subject: "Try the new Scaaf dashboard",
+      snippet: "We’ve just launched a new feature for you.",
+      date: "2025-11-16",
+    },
+  ],
+};
+
+
+
 // DISABLED FOR PRODUCTION - Mock database
 /*
 export interface EmailRecord {
