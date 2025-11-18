@@ -15,7 +15,7 @@ import { RuleAnalytics } from "@/components/rule-analytics"
 import { useUserStore } from "@/lib/user-store"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Crown } from "lucide-react"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
 interface Rule {

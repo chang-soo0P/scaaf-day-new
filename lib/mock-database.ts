@@ -11,10 +11,22 @@ export const mockDB = {
       id: "2",
       sender: "team@scaaf.day",
       subject: "Try the new Scaaf dashboard",
-      snippet: "We’ve just launched a new feature for you.",
+      snippet: "We've just launched a new feature for you.",
       date: "2025-11-16",
     },
   ],
+  async getEmailsByUser(userId: string) {
+    // Return mock emails filtered by user_id if needed
+    // For now, return all emails as mock data
+    return this.emails.map((email) => ({
+      ...email,
+      user_id: userId,
+      gmail_id: email.id,
+      from: email.sender,
+      summary: "",
+      actions: [],
+    }));
+  },
 };
 
 
