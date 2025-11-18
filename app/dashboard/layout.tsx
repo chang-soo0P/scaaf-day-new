@@ -5,7 +5,6 @@ import type React from "react"
 import { AppLayout } from "@/components/app-layout"
 import { ProtectedRoute } from "@/components/auth-guard"
 import { AuthSync } from "@/components/auth-sync"
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import "../globals.css"
 
 export default function DashboardLayout({

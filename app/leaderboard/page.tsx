@@ -20,7 +20,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Trophy, Medal, Star, Users, Mail, Edit, Lock } from "lucide-react"
 import { AppLayout } from "@/components/app-layout"
-import { ProtectedRoute } from "@/components/protected-route"
+import { ProtectedRoute } from "@/components/auth-guard"
 
 // DISABLED FOR PRODUCTION - Mock data for leaderboards
 /*

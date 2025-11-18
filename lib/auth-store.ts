@@ -20,6 +20,7 @@ interface AuthState {
   logout: () => void
   updateTokens: (accessToken: string, expiresAt: number, refreshToken?: string) => void
   checkAuthStatus: () => Promise<boolean>
+  syncAuth: () => void // Sync auth from cookies
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -118,6 +119,12 @@ export const useAuthStore = create<AuthState>()(
         } finally {
           set({ isLoading: false })
         }
+      },
+
+      syncAuth: () => {
+        // Sync auth state from cookies/localStorage
+        const { checkAuthStatus } = get()
+        checkAuthStatus()
       },
     }),
     {
