@@ -54,9 +54,9 @@
             "vite": "6.3.5"
       },
 "scripts": {
-  "dev": "next dev --turbopack -p 3000",
+  "dev": "kill -9 $(lsof -ti:3000) 2>/dev/null || true && rm -rf .next/dev/lock && next dev -p 3000",
   "build": "next build",
-  "start": "next start"
+  "start": "next start -p 3000"
 }
 
 }
