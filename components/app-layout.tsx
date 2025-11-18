@@ -7,10 +7,7 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  return (
-    <div className="min-h-screen bg-background">
-      {children}
-    </div>
-  );
+  return <div className="mx-auto max-w-screen-lg p-6">{children}</div>;
 }
 
+export default AppLayout;
