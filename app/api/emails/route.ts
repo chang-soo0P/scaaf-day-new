@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase-client";
+import { supabaseServer } from "@/lib/supabase/server";
 import { mockDB } from "@/lib/mock-database";
 
 // ----------------------
@@ -14,8 +14,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "User ID required" }, { status: 400 });
     }
 
-    // ✅ Supabase가 사용 가능한 경우 사용, 아니면 mock DB 사용
-    if (supabase) {
+    // ✅ Supabase 사용 (환경 변수가 없으면 에러 발생)
+    try {
+      const supabase = supabaseServer();
       const { data, error } = await supabase
         .from("emails")
         .select("*")
@@ -24,8 +25,9 @@ export async function GET(request: NextRequest) {
 
       if (error) throw error;
       return NextResponse.json({ data }, { status: 200 });
-    } else {
-      // Fallback to mock database
+    } catch (supabaseError) {
+      // Fallback to mock database if Supabase is not configured
+      console.warn("Supabase not available, using mock DB:", supabaseError);
       const emails = await mockDB.getEmailsByUser(userId);
       return NextResponse.json({ data: emails }, { status: 200 });
     }
@@ -58,8 +60,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // ✅ Supabase가 사용 가능한 경우 사용
-    if (supabase) {
+    // ✅ Supabase 사용 (환경 변수가 없으면 에러 발생)
+    try {
+      const supabase = supabaseServer();
       const formattedDate = new Date().toISOString().split("T")[0];
       const { data, error } = await supabase.from("emails").insert([
         {
@@ -76,8 +79,9 @@ export async function POST(request: NextRequest) {
 
       if (error) throw error;
       return NextResponse.json({ data }, { status: 201 });
-    } else {
-      // Fallback: just return success (mock mode)
+    } catch (supabaseError) {
+      // Fallback: return success (mock mode)
+      console.warn("Supabase not available, using mock mode:", supabaseError);
       return NextResponse.json({ data: { id: Date.now().toString() } }, { status: 201 });
     }
   } catch (error: any) {
