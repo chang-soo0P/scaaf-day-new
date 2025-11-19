@@ -13,9 +13,9 @@ interface FriendShareCardProps {
 }
 
 const mockFriends: Friend[] = [
-  { id: '1', name: '김서연', todayEmoji: '⚡' },
-  { id: '2', name: '박지훈', todayEmoji: '🌿' },
-  { id: '3', name: '이민지', todayEmoji: '✨' },
+  { id: '1', name: 'Sarah Kim', todayEmoji: '⚡' },
+  { id: '2', name: 'James Park', todayEmoji: '🌿' },
+  { id: '3', name: 'Emma Lee', todayEmoji: '✨' },
 ];
 
 export function FriendShareCard({ onOpenModal }: FriendShareCardProps) {
@@ -26,7 +26,7 @@ export function FriendShareCard({ onOpenModal }: FriendShareCardProps) {
           <div className="bg-gradient-to-br from-blue-500 to-purple-500 rounded-full p-2">
             <Users className="w-5 h-5 text-white" />
           </div>
-          <h3 className="text-gray-900">친구와 공유</h3>
+          <h3 className="text-gray-900">Share with Friends</h3>
         </div>
         <Button 
           size="sm" 
@@ -34,7 +34,7 @@ export function FriendShareCard({ onOpenModal }: FriendShareCardProps) {
           onClick={onOpenModal}
         >
           <UserPlus className="w-4 h-4 mr-1" />
-          초대
+          Invite
         </Button>
       </div>
 
@@ -70,7 +70,7 @@ export function FriendShareCard({ onOpenModal }: FriendShareCardProps) {
           onClick={onOpenModal}
           className="w-full text-center text-sm text-purple-600 hover:text-purple-700 py-2 hover:bg-purple-50 rounded-lg transition-colors"
         >
-          친구의 오늘 하루 더 보기 →
+          See more of your friends' day →
         </button>
       </div>
     </div>

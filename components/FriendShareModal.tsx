@@ -18,9 +18,9 @@ interface FriendShareModalProps {
 }
 
 const mockFriends: Friend[] = [
-  { id: '1', name: '김서연', email: 'kim@example.com', todayMood: '생산적인 하루', todayEmoji: '⚡' },
-  { id: '2', name: '박지훈', email: 'park@example.com', todayMood: '차분한 하루', todayEmoji: '🌿' },
-  { id: '3', name: '이민지', email: 'lee@example.com', todayMood: '영감 가득한 하루', todayEmoji: '✨' },
+  { id: '1', name: 'Sarah Kim', email: 'kim@example.com', todayMood: 'Productive day', todayEmoji: '⚡' },
+  { id: '2', name: 'James Park', email: 'park@example.com', todayMood: 'Calm day', todayEmoji: '🌿' },
+  { id: '3', name: 'Emma Lee', email: 'lee@example.com', todayMood: 'Inspiring day', todayEmoji: '✨' },
 ];
 
 export function FriendShareModal({ onClose }: FriendShareModalProps) {
@@ -46,8 +46,8 @@ export function FriendShareModal({ onClose }: FriendShareModalProps) {
         <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h2 className="text-white">친구와 감정 공유하기</h2>
-              <p className="text-sm text-white/80">서로의 하루를 함께 돌아봐요</p>
+              <h2 className="text-white">Share Emotions with Friends</h2>
+              <p className="text-sm text-white/80">Look back on your day together</p>
             </div>
             <Button
               onClick={onClose}
@@ -64,11 +64,11 @@ export function FriendShareModal({ onClose }: FriendShareModalProps) {
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Invite Section */}
           <div className="space-y-4">
-            <h3 className="text-gray-900">친구 초대하기</h3>
+            <h3 className="text-gray-900">Invite Friends</h3>
             
             {/* Email invite */}
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 space-y-3">
-              <p className="text-sm text-gray-700">이메일로 초대</p>
+              <p className="text-sm text-gray-700">Invite by Email</p>
               <div className="flex gap-2">
                 <Input
                   type="email"
@@ -79,14 +79,14 @@ export function FriendShareModal({ onClose }: FriendShareModalProps) {
                 />
                 <Button onClick={handleInvite} className="bg-indigo-600 hover:bg-indigo-700">
                   <Send className="w-4 h-4 mr-2" />
-                  초대
+                  Invite
                 </Button>
               </div>
             </div>
 
             {/* Link invite */}
             <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-4 space-y-3">
-              <p className="text-sm text-gray-700">링크로 초대</p>
+              <p className="text-sm text-gray-700">Invite by Link</p>
               <div className="flex gap-2">
                 <Input
                   value={inviteLink}
@@ -101,12 +101,12 @@ export function FriendShareModal({ onClose }: FriendShareModalProps) {
                   {copied ? (
                     <>
                       <Check className="w-4 h-4 mr-2" />
-                      복사됨
+                      Copied
                     </>
                   ) : (
                     <>
                       <Copy className="w-4 h-4 mr-2" />
-                      복사
+                      Copy
                     </>
                   )}
                 </Button>
@@ -117,8 +117,8 @@ export function FriendShareModal({ onClose }: FriendShareModalProps) {
           {/* Friends List */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-gray-900">내 친구들</h3>
-              <span className="text-sm text-gray-600">{mockFriends.length}명</span>
+              <h3 className="text-gray-900">My Friends</h3>
+              <span className="text-sm text-gray-600">{mockFriends.length}</span>
             </div>
 
             <div className="space-y-3">
@@ -155,7 +155,7 @@ export function FriendShareModal({ onClose }: FriendShareModalProps) {
                       className="flex-shrink-0"
                     >
                       <Send className="w-4 h-4 mr-1" />
-                      공유
+                      Share
                     </Button>
                   </div>
                 </div>
@@ -165,13 +165,13 @@ export function FriendShareModal({ onClose }: FriendShareModalProps) {
 
           {/* Share Newsletter Section */}
           <div className="bg-gradient-to-br from-orange-50 to-pink-50 rounded-2xl p-6 space-y-3">
-            <h4 className="text-gray-900">💌 뉴스레터 공유하기</h4>
+            <h4 className="text-gray-900">💌 Share Newsletter</h4>
             <p className="text-sm text-gray-600">
-              오늘 받은 흥미로운 뉴스레터를 친구들에게 공유해보세요
+              Share interesting newsletters you received today with your friends
             </p>
             <Button className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600">
               <UserPlus className="w-4 h-4 mr-2" />
-              공유할 뉴스레터 선택
+              Select Newsletter to Share
             </Button>
           </div>
         </div>

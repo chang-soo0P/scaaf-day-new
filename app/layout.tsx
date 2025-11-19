@@ -3,8 +3,8 @@ import type { Metadata } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Scaaf.day - 감성 이메일 정리",
-  description: "매일 당신의 이메일을 감성적으로 정리해드려요",
+  title: "Scaaf.day - Emotionally summarize your email every day",
+  description: "Emotionally summarize your email every day",
   generator: "v0.app",
 }
 
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ko">
+    <html lang="en">
       <body>
         {children}
       </body>

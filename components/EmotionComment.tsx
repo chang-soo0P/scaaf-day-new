@@ -33,7 +33,7 @@ export function EmotionComment({ text, subtext, emoji, onClick }: EmotionComment
           {/* Calendar hint */}
           <div className="flex flex-col items-center gap-2 text-white/60 group-hover:text-white/90 transition-colors">
             <Calendar className="w-6 h-6" />
-            <span className="text-xs">기록 보기</span>
+            <span className="text-xs">View Records</span>
           </div>
         </div>
       </div>

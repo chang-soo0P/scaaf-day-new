@@ -6,7 +6,7 @@ interface TodaySummaryHeaderProps {
 }
 
 export function TodaySummaryHeader({ totalEmails, highlights }: TodaySummaryHeaderProps) {
-  const today = new Date().toLocaleDateString('ko-KR', { 
+  const today = new Date().toLocaleDateString('en-US', { 
     year: 'numeric',
     month: 'long', 
     day: 'numeric',
@@ -22,11 +22,11 @@ export function TodaySummaryHeader({ totalEmails, highlights }: TodaySummaryHead
               <Calendar className="w-4 h-4" />
               <span className="text-sm">{today}</span>
             </div>
-            <h2 className="text-white">오늘의 메일 하이라이트</h2>
+            <h2 className="text-white">Today's Email Highlights</h2>
           </div>
           <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-3 text-center">
-            <div className="text-sm text-indigo-100">총 메일</div>
-            <div className="text-white">{totalEmails}개</div>
+            <div className="text-sm text-indigo-100">Total Emails</div>
+            <div className="text-white">{totalEmails}</div>
           </div>
         </div>
 

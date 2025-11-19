@@ -52,7 +52,7 @@ export function EmailDetailModal({ email, onClose }: EmailDetailModalProps) {
               </div>
               <div className="flex items-center gap-2">
                 <span className="bg-white/20 text-white text-sm px-3 py-1 rounded-full">
-                  {email.count}개의 메일
+                  {email.count} emails
                 </span>
                 <span className="text-sm text-indigo-100">{email.timestamp}</span>
               </div>
@@ -74,7 +74,7 @@ export function EmailDetailModal({ email, onClose }: EmailDetailModalProps) {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <span className="text-purple-600">✨</span>
-              <h4 className="text-gray-900">AI 요약</h4>
+              <h4 className="text-gray-900">AI Summary</h4>
             </div>
             <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-4">
               <p className="text-gray-700">{email.summary}</p>
@@ -83,7 +83,7 @@ export function EmailDetailModal({ email, onClose }: EmailDetailModalProps) {
 
           {/* Individual Emails */}
           <div className="space-y-3">
-            <h4 className="text-gray-900">포함된 메일 ({email.count}개)</h4>
+            <h4 className="text-gray-900">Included Emails ({email.count})</h4>
             <div className="space-y-2">
               {email.emails.map((item, index) => (
                 <div 
@@ -105,7 +105,7 @@ export function EmailDetailModal({ email, onClose }: EmailDetailModalProps) {
           {/* Feedback Section */}
           {!submitted ? (
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 space-y-4">
-              <h4 className="text-gray-900">이 요약이 도움이 되었나요?</h4>
+              <h4 className="text-gray-900">Was this summary helpful?</h4>
               
               <div className="flex gap-3">
                 <Button
@@ -114,7 +114,7 @@ export function EmailDetailModal({ email, onClose }: EmailDetailModalProps) {
                   className={feedback === 'positive' ? 'bg-green-600 hover:bg-green-700' : ''}
                 >
                   <ThumbsUp className="w-4 h-4 mr-2" />
-                  도움됨
+                  Helpful
                 </Button>
                 <Button
                   onClick={() => setFeedback('negative')}
@@ -122,14 +122,14 @@ export function EmailDetailModal({ email, onClose }: EmailDetailModalProps) {
                   className={feedback === 'negative' ? 'bg-red-600 hover:bg-red-700' : ''}
                 >
                   <ThumbsDown className="w-4 h-4 mr-2" />
-                  아쉬움
+                  Not Helpful
                 </Button>
               </div>
 
               {feedback && (
                 <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
                   <Textarea
-                    placeholder="더 나은 서비스를 위해 의견을 남겨주세요 (선택사항)"
+                    placeholder="Please leave your feedback for better service (optional)"
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     rows={3}
@@ -139,15 +139,15 @@ export function EmailDetailModal({ email, onClose }: EmailDetailModalProps) {
                     onClick={handleSubmitFeedback}
                     className="w-full bg-indigo-600 hover:bg-indigo-700"
                   >
-                    피드백 제출
+                    Submit Feedback
                   </Button>
                 </div>
               )}
             </div>
           ) : (
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 text-center space-y-2">
-              <p className="text-green-700">✓ 피드백이 제출되었습니다</p>
-              <p className="text-sm text-green-600">소중한 의견 감사합니다!</p>
+              <p className="text-green-700">✓ Feedback has been submitted</p>
+              <p className="text-sm text-green-600">Thank you for your valuable feedback!</p>
             </div>
           )}
         </div>

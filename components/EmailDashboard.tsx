@@ -18,14 +18,14 @@ const mockEmails = [
     sender: 'Netflix',
     senderEmail: 'info@netflix.com',
     count: 3,
-    latestSubject: '새로운 시리즈가 도착했어요',
-    summary: '이번 주 추천 콘텐츠: 스릴러 드라마 "더 글로리" 시즌 2가 공개되었습니다. 또한 다큐멘터리 "우리의 지구" 새 에피소드도 시청 가능합니다.',
-    timestamp: '2시간 전',
+    latestSubject: 'New Series Arrived',
+    summary: 'This week\'s recommended content: Thriller drama "The Glory" Season 2 has been released. Also, new episodes of the documentary "Our Planet" are now available.',
+    timestamp: '2 hours ago',
     category: 'entertainment',
     emails: [
-      { subject: '새로운 시리즈가 도착했어요', preview: '이번 주 추천...' },
-      { subject: '시청 기록 기반 추천', preview: '좋아하실 만한...' },
-      { subject: '프로필 활동 요약', preview: '지난 주 시청...' }
+      { subject: 'New Series Arrived', preview: 'This week\'s recommendations...' },
+      { subject: 'Recommendations Based on Watch History', preview: 'You might like...' },
+      { subject: 'Profile Activity Summary', preview: 'Last week\'s viewing...' }
     ]
   },
   {
@@ -33,16 +33,16 @@ const mockEmails = [
     sender: 'LinkedIn',
     senderEmail: 'notifications@linkedin.com',
     count: 5,
-    latestSubject: '네트워크 업데이트',
-    summary: '김철수님이 새로운 직책에 임명되었습니다. 박영희님의 게시물에 댓글 15개가 달렸습니다. 프로덕트 디자이너 채용 공고 3건이 새로 올라왔습니다.',
-    timestamp: '3시간 전',
+    latestSubject: 'Network Updates',
+    summary: 'John Smith has been appointed to a new position. 15 comments were added to Jane Doe\'s post. 3 new product designer job postings have been added.',
+    timestamp: '3 hours ago',
     category: 'work',
     emails: [
-      { subject: '네트워크 업데이트', preview: '김철수님이...' },
-      { subject: '채용 공고 알림', preview: '관심 있을 만한...' },
-      { subject: '게시물 인사이트', preview: '박영희님의...' },
-      { subject: '프로필 조회수', preview: '이번 주...' },
-      { subject: '추천 연결', preview: '알 수도 있는...' }
+      { subject: 'Network Updates', preview: 'John Smith...' },
+      { subject: 'Job Posting Alerts', preview: 'You might be interested...' },
+      { subject: 'Post Insights', preview: 'Jane Doe\'s...' },
+      { subject: 'Profile Views', preview: 'This week...' },
+      { subject: 'Recommended Connections', preview: 'People you may know...' }
     ]
   },
   {
@@ -50,13 +50,13 @@ const mockEmails = [
     sender: 'Substack',
     senderEmail: 'noreply@substack.com',
     count: 2,
-    latestSubject: '주간 뉴스레터: AI의 미래',
-    summary: '생성형 AI가 창작 산업에 미치는 영향을 분석한 심층 아티클입니다. GPT-4의 새로운 기능과 윤리적 고려사항에 대해 다룹니다.',
-    timestamp: '5시간 전',
+    latestSubject: 'Weekly Newsletter: The Future of AI',
+    summary: 'An in-depth article analyzing the impact of generative AI on the creative industry. Covers new features of GPT-4 and ethical considerations.',
+    timestamp: '5 hours ago',
     category: 'newsletter',
     emails: [
-      { subject: '주간 뉴스레터: AI의 미래', preview: '생성형 AI가...' },
-      { subject: '독자 Q&A 모음', preview: '지난 주...' }
+      { subject: 'Weekly Newsletter: The Future of AI', preview: 'Generative AI...' },
+      { subject: 'Reader Q&A Collection', preview: 'Last week...' }
     ]
   },
   {
@@ -64,12 +64,12 @@ const mockEmails = [
     sender: 'Notion',
     senderEmail: 'team@notion.so',
     count: 1,
-    latestSubject: '팀 워크스페이스 업데이트',
-    summary: '새로운 페이지 3개가 "프로젝트 A" 워크스페이스에 추가되었습니다. @mention 알림 2건이 있습니다.',
-    timestamp: '어제',
+    latestSubject: 'Team Workspace Updates',
+    summary: '3 new pages have been added to the "Project A" workspace. There are 2 @mention notifications.',
+    timestamp: 'Yesterday',
     category: 'work',
     emails: [
-      { subject: '팀 워크스페이스 업데이트', preview: '새로운 페이지...' }
+      { subject: 'Team Workspace Updates', preview: 'New pages...' }
     ]
   },
   {
@@ -78,8 +78,8 @@ const mockEmails = [
     senderEmail: 'notifications@github.com',
     count: 7,
     latestSubject: '[username/repo] New PR #142',
-    summary: '3개의 새로운 Pull Request가 대기 중입니다. 이슈 #89에 새로운 댓글이 달렸고, main 브랜치에 4개의 커밋이 푸시되었습니다.',
-    timestamp: '어제',
+    summary: '3 new Pull Requests are pending. A new comment was added to issue #89, and 4 commits were pushed to the main branch.',
+    timestamp: 'Yesterday',
     category: 'work',
     emails: [
       { subject: '[username/repo] New PR #142', preview: 'Feature: Add...' },
@@ -93,8 +93,8 @@ const mockEmails = [
     senderEmail: 'noreply@medium.com',
     count: 4,
     latestSubject: 'Daily Digest',
-    summary: 'UX 디자인, 스타트업 성장 전략, 그리고 리모트 워크 문화에 대한 인기 아티클 모음입니다. 추천 작가의 새 글도 포함되어 있습니다.',
-    timestamp: '어제',
+    summary: 'A collection of popular articles about UX design, startup growth strategies, and remote work culture. Includes new posts from recommended authors.',
+    timestamp: 'Yesterday',
     category: 'newsletter',
     emails: [
       { subject: 'Daily Digest', preview: 'Top stories...' },
@@ -104,14 +104,14 @@ const mockEmails = [
 ];
 
 const highlights = [
-  'GitHub에서 3개의 PR 리뷰 요청',
-  'LinkedIn 네트워크 업데이트 5건',
-  'AI 관련 뉴스레터 2건'
+  '3 PR review requests from GitHub',
+  '5 LinkedIn network updates',
+  '2 AI-related newsletters'
 ];
 
 const emotionComment = {
-  text: "오늘은 차분한 하루네요",
-  subtext: "업무 관련 메일이 많았지만, 전반적으로 긍정적인 소식들이에요",
+  text: "It's been a calm day today",
+  subtext: "There were many work-related emails, but overall positive news",
   emoji: "🌿"
 };
 
@@ -135,7 +135,7 @@ export function EmailDashboard() {
               </div>
               <div>
                 <h1 className="text-indigo-900">Scaaf.day</h1>
-                <p className="text-sm text-gray-600">오늘의 메일 정리</p>
+                <p className="text-sm text-gray-600">Today's Mail Summary</p>
               </div>
             </div>
             
@@ -188,7 +188,7 @@ export function EmailDashboard() {
             {zenMode ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-gray-900">Inbox Zen 모드</h3>
+                  <h3 className="text-gray-900">Inbox Zen Mode</h3>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
@@ -196,7 +196,7 @@ export function EmailDashboard() {
                       onClick={() => setZenIndex(Math.max(0, zenIndex - 1))}
                       disabled={zenIndex === 0}
                     >
-                      이전
+                      Previous
                     </Button>
                     <span className="text-sm text-gray-600">
                       {zenIndex + 1} / {mockEmails.length}
@@ -207,7 +207,7 @@ export function EmailDashboard() {
                       onClick={() => setZenIndex(Math.min(mockEmails.length - 1, zenIndex + 1))}
                       disabled={zenIndex === mockEmails.length - 1}
                     >
-                      다음
+                      Next
                     </Button>
                   </div>
                 </div>
@@ -228,10 +228,10 @@ export function EmailDashboard() {
             {/* Stats Footer */}
             <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 text-center">
               <p className="text-indigo-600">
-                🎉 오늘 22개의 메일을 정리했어요!
+                🎉 Organized 22 emails today!
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                계속 이런 페이스로 가볍게 유지해봐요
+                Keep up this pace and stay light
               </p>
             </div>
           </div>
