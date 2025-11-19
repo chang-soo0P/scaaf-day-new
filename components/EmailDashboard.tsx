@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { TodaySummaryHeader } from './TodaySummaryHeader';
 import { EmotionComment } from './EmotionComment';
 import { EmailCardGrid } from './EmailCardGrid';
@@ -10,6 +11,7 @@ import { FriendShareModal } from './FriendShareModal';
 import { Settings, LogOut, Sparkles, BarChart3 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Switch } from './ui/switch';
+import { useAuthStore } from '@/lib/auth-store';
 
 // Mock data
 const mockEmails = [
@@ -116,12 +118,25 @@ const emotionComment = {
 };
 
 export function EmailDashboard() {
+  const router = useRouter();
+  const { logout } = useAuthStore();
   const [selectedEmail, setSelectedEmail] = useState<typeof mockEmails[0] | null>(null);
   const [showEmotionCalendar, setShowEmotionCalendar] = useState(false);
   const [showFriendShare, setShowFriendShare] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [zenMode, setZenMode] = useState(false);
   const [zenIndex, setZenIndex] = useState(0);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if logout fails, redirect to login page
+      router.push('/login');
+    }
+  };
 
   return (
     <div className="min-h-screen pb-12">
@@ -151,7 +166,12 @@ export function EmailDashboard() {
               <Button variant="ghost" size="sm">
                 <Settings className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="sm">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={handleLogout}
+                title="Logout"
+              >
                 <LogOut className="w-4 h-4" />
               </Button>
             </div>
