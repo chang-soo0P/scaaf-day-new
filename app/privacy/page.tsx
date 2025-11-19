@@ -1,135 +1,68 @@
-import React from "react";
-import Markdown from "react-markdown";
-
-const privacyText = `
-# Privacy Policy
-_Last updated: January 2025_
-
-Scaaf (“we”, “our”, “the Service”) is committed to protecting your privacy.  
-This Policy explains how we collect, use, disclose, store, and protect your data in compliance with:
-- GDPR (EU)
-- CCPA (California)
-- Korea Personal Information Protection Act (PIPA)
-- Other relevant data protection laws
-
----
-
-## 1. Information We Collect
-
-### 1.1 Google Account Information
-When you sign in using Google OAuth, we collect:
-- Name
-- Email address
-- Profile image
-- OAuth access and refresh tokens
-
-Tokens are encrypted and stored securely.
-
----
-
-### 1.2 Gmail Data
-With your explicit consent, we access:
-- Email subjects  
-- Sender/recipient  
-- Message body text  
-- Metadata (timestamps, labels, thread info)  
-- Text-based attachments (for summarization only)
-
-We do **not** permanently store full raw emails unless required for features you explicitly enable.
-
----
-
-### 1.3 Usage Data
-We may collect:
-- Clickstream events
-- Device information
-- Browser type
-- Feature usage logs
-
-Used solely to improve service quality.
-
----
-
-## 2. How We Use Your Information
-We use your data to:
-- Generate AI-based summaries using OpenAI
-- Provide personalized insights
-- Support secure authentication
-- Improve platform performance
-
----
-
-## 3. Legal Basis (GDPR)
-We process data based on:
-- Your **consent** (Google OAuth, Gmail scopes)
-- **Performance of contract**
-- **Legitimate interests** (security, product improvement)
-
----
-
-## 4. Data Sharing
-We **do not** sell or rent your data.
-
-We may share with:
-- OpenAI (for AI summarization)
-- Supabase (database provider)
-- Google OAuth / Gmail API
-- Analytics providers (aggregated data only)
-
-All transfers use:
-- Encryption  
-- SCC (Standard Contractual Clauses)  
-- DPAs as required  
-
----
-
-## 5. International Data Transfers
-Your data may be processed in the USA, EU, South Korea, or other regions.
-
----
-
-## 6. Data Retention
-
-| Data Type | Retention |
-|-----------|-----------|
-| AI summaries | Until deleted |
-| Tokens | Until revoked |
-| Logs | 30–90 days |
-| Metadata | While account active |
-
----
-
-## 7. Your Rights
-You may:
-- Request your data  
-- Delete summaries  
-- Withdraw Gmail access  
-- Request account deletion  
-- Request data export  
-
-Contact: **privacy@scaaf.day**
-
----
-
-## 8. Children’s Privacy
-Not intended for users under 18.
-
----
-
-## 9. Cookie Policy
-We use essential cookies, preference cookies, and analytics cookies.  
-You may disable cookies in your browser.
-
----
-
-## 10. Contact
-**privacy@scaaf.day**
-`;
-
 export default function PrivacyPage() {
+  const html = `
+    <h1>Privacy Policy</h1>
+    <p><em>Last updated: January 2025</em></p>
+
+    <h2>1. Information We Collect</h2>
+    <p>We collect Google Account information, Gmail message content (with explicit consent), usage analytics, and device metadata.</p>
+
+    <h3>1.1 Google Account Information</h3>
+    <ul>
+      <li>Name</li>
+      <li>Email address</li>
+      <li>Profile image</li>
+      <li>OAuth access & refresh tokens (encrypted)</li>
+    </ul>
+
+    <h3>1.2 Gmail Data</h3>
+    <p>With your permission, we access your Gmail for AI summarization and productivity features. We do not permanently store raw email content unless explicitly required.</p>
+
+    <h3>1.3 Usage Data</h3>
+    <p>We collect clickstream events, device information, and feature usage logs to improve service quality.</p>
+
+    <h2>2. How We Use Information</h2>
+    <ul>
+      <li>AI-based summarization</li>
+      <li>Newsletter extraction</li>
+      <li>Sender-based grouping</li>
+      <li>Personalized insights</li>
+    </ul>
+
+    <h2>3. Legal Basis (GDPR)</h2>
+    <p>Consent, contract performance, and legitimate interests.</p>
+
+    <h2>4. Data Sharing</h2>
+    <p>We do not sell user data. We may share data with OpenAI, Supabase, Google OAuth/Gmail, and analytics providers.</p>
+
+    <h2>5. International Data Transfers</h2>
+    <p>Your data may be stored or processed in the US, EU, South Korea, or other regions under appropriate safeguards.</p>
+
+    <h2>6. Data Retention</h2>
+    <table>
+      <tr><td>AI summaries</td><td>Until deleted</td></tr>
+      <tr><td>OAuth tokens</td><td>Until revoked</td></tr>
+      <tr><td>Logs</td><td>30–90 days</td></tr>
+    </table>
+
+    <h2>7. Your Rights</h2>
+    <p>You may request access, deletion, data export, or withdrawal of Gmail access.</p>
+
+    <h2>8. Cookies</h2>
+    <p>We use essential, preference, and analytics cookies.</p>
+
+    <h2>9. Children’s Privacy</h2>
+    <p>Scaaf is not intended for individuals under 18 years old.</p>
+
+    <h2>10. Contact</h2>
+    <p>Email: <strong>privacy@scaaf.day</strong></p>
+  `;
+
   return (
-    <div className="prose prose-neutral dark:prose-invert max-w-3xl mx-auto py-10 px-5">
-      <Markdown>{privacyText}</Markdown>
+    <div className="max-w-3xl mx-auto px-6 py-10">
+      <div
+        className="prose prose-neutral dark:prose-invert prose-headings:font-semibold"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     </div>
   );
 }
