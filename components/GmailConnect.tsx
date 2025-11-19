@@ -1,12 +1,46 @@
+"use client";
+
+import { useState } from "react";
 import { Mail, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 
 interface GmailConnectProps {
-  onConnect: () => void;
+  onConnect?: () => void;
 }
 
 export function GmailConnect({ onConnect }: GmailConnectProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGmailConnect = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Google OAuth URL 가져오기
+      const response = await fetch("/api/auth/google");
+      const data = await response.json();
+
+      if (data.error) {
+        console.error("Failed to get auth URL:", data.error);
+        alert("Gmail 연결에 실패했습니다. 다시 시도해주세요.");
+        return;
+      }
+
+      if (data.authUrl) {
+        // Google OAuth 페이지로 리디렉션
+        window.location.href = data.authUrl;
+      } else {
+        console.error("No auth URL received");
+        alert("인증 URL을 가져올 수 없습니다.");
+      }
+    } catch (error) {
+      console.error("Gmail connect error:", error);
+      alert("Gmail 연결 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen p-6">
       <div className="max-w-md w-full text-center space-y-8">
@@ -49,12 +83,13 @@ export function GmailConnect({ onConnect }: GmailConnectProps) {
 
         {/* Gmail Button */}
         <Button
-          onClick={onConnect}
+          onClick={handleGmailConnect}
+          disabled={isLoading}
           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
           size="lg"
         >
           <Mail className="w-5 h-5 mr-2" />
-          Gmail 연결하기
+          {isLoading ? "연결 중..." : "Gmail 연결하기"}
         </Button>
 
         {/* Terms & Privacy Footer (Open in New Tab) */}

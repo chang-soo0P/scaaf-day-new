@@ -5,13 +5,18 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
-  // ✅ 에러 또는 code 없음 → /login 으로 이동
+  // ✅ 개발/운영 환경 모두에서 동일한 base URL 사용
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
+  // ✅ 에러 또는 code 없음 → 홈페이지로 이동
   if (error) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login?error=${error}`);
+    return NextResponse.redirect(`${baseUrl}/?error=${error}`);
   }
 
   if (!code) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login?error=no_code`);
+    return NextResponse.redirect(`${baseUrl}/?error=no_code`);
   }
 
   try {
@@ -48,9 +53,12 @@ export async function GET(request: NextRequest) {
 
     console.log("[v0] Token scopes:", tokens.scope);
 
-    const response = NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/digest?authenticated=true`
-    );
+    // ✅ 개발/운영 환경 모두에서 홈페이지로 리디렉션
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
+    const response = NextResponse.redirect(`${baseUrl}/?authenticated=true`);
 
     // ✅ 쿠키 설정 유지
     response.cookies.set("gmail_access_token", tokens.access_token, {
@@ -87,7 +95,10 @@ export async function GET(request: NextRequest) {
     return response;
   } catch (error) {
     console.error("Token exchange error:", error);
-    // ✅ 에러 시에도 /login 으로 이동
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login?error=token_exchange_failed`);
+    // ✅ 에러 시에도 홈페이지로 이동
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+    return NextResponse.redirect(`${baseUrl}/?error=token_exchange_failed`);
   }
 }
