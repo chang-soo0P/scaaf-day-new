@@ -16,7 +16,6 @@ export function GmailConnect({ onConnect }: GmailConnectProps) {
     try {
       setIsLoading(true);
       
-      // Get Google OAuth URL
       const response = await fetch("/api/auth/google");
       const data = await response.json();
 
@@ -27,7 +26,6 @@ export function GmailConnect({ onConnect }: GmailConnectProps) {
       }
 
       if (data.authUrl) {
-        // Redirect to Google OAuth page
         window.location.href = data.authUrl;
       } else {
         console.error("No auth URL received");
@@ -92,7 +90,7 @@ export function GmailConnect({ onConnect }: GmailConnectProps) {
           {isLoading ? "Connecting..." : "Connect Gmail"}
         </Button>
 
-        {/* Terms & Privacy Footer (Open in New Tab) */}
+        {/* Terms & Privacy & OAuth Disclosure */}
         <p className="text-xs text-gray-500 leading-5 pt-4">
           By continuing, you agree to our{" "}
           <Link
@@ -103,7 +101,7 @@ export function GmailConnect({ onConnect }: GmailConnectProps) {
           >
             Terms of Service
           </Link>
-          {" "}and{" "}
+          {", "}
           <Link
             href="/privacy"
             target="_blank"
@@ -111,6 +109,15 @@ export function GmailConnect({ onConnect }: GmailConnectProps) {
             className="underline font-medium hover:text-gray-700"
           >
             Privacy Policy
+          </Link>
+          {", and "}
+          <Link
+            href="/google-oauth-disclosure"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline font-medium hover:text-gray-700"
+          >
+            OAuth Data Use Disclosure
           </Link>
           .
         </p>
