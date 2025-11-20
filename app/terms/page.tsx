@@ -2,7 +2,7 @@ export default function TermsPage() {
   return (
     <div className="prose mx-auto px-6 py-10">
       <h1>Terms of Service</h1>
-      <p>Last updated: [날짜]</p>
+      <p>Last updated: [November 20, 2025]</p>
 
       <h2>1. Service Overview</h2>
       <p>
