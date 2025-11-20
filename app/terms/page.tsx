@@ -1,62 +1,58 @@
 export default function TermsPage() {
-  const html = `
-    <h1>Terms of Service</h1>
-    <p><em>Last updated: January 2025</em></p>
+  return (
+    <div className="prose mx-auto px-6 py-10">
+      <h1>Terms of Service</h1>
+      <p>Last updated: [날짜]</p>
 
-    <h2>1. Overview</h2>
-    <p>Welcome to Scaaf (scaaf.day). By using the Service, you agree to these Terms.</p>
+      <h2>1. Service Overview</h2>
+      <p>
+        Scaaf.day provides an AI-powered email summarization and organization tool
+        that connects to your Gmail account via Google OAuth.
+      </p>
 
-    <h2>2. Eligibility</h2>
-    <p>You must be 18 years or older and legally capable of granting Gmail access.</p>
+      <h2>2. Eligibility</h2>
+      <p>
+        You must be legally able to create and use an email account to use this Service.
+      </p>
 
-    <h2>3. Use of the Service</h2>
-    <ul>
-      <li>No unlawful or harmful activities</li>
-      <li>No unauthorized system access</li>
-      <li>No misuse of Gmail data</li>
-    </ul>
+      <h2>3. Account & Security</h2>
+      <p>
+        We do not store your Google password, Access Token, or Refresh Token.
+      </p>
 
-    <h2>4. Gmail Access</h2>
-    <p>
-      By signing in via Google, you authorize Scaaf to read and analyze your Gmail messages.
-      We do not send emails on your behalf or access data outside Gmail.
-      You may revoke access anytime via:
-      <a href="https://myaccount.google.com/permissions" target="_blank">Google Permissions</a>.
-    </p>
+      <h2>4. Acceptable Use</h2>
+      <ul>
+        <li>No reverse engineering</li>
+        <li>No unlawful use</li>
+        <li>No service disruption</li>
+      </ul>
 
-    <h2>5. AI-Generated Content</h2>
-    <p>Summaries may be incomplete or contain errors. They are not professional advice.</p>
+      <h2>5. Gmail Integration & Permissions</h2>
+      <p>
+        We store only metadata: gmail_id, subject, from, snippet, summary, actions, user_id, date.
+      </p>
 
-    <h2>6. Data Storage</h2>
-    <p>We store metadata, summaries, and encrypted OAuth tokens. Raw emails are not permanently stored unless required.</p>
+      <h2>6. Intellectual Property</h2>
+      <p>
+        All software, trademarks, and service materials remain our property.
+      </p>
 
-    <h2>7. Payments</h2>
-    <p>Some features may require subscription plans.</p>
+      <h2>7. Service Modifications</h2>
+      <p>We may modify or discontinue the Service at any time.</p>
 
-    <h2>8. Termination</h2>
-    <p>We may suspend accounts for violations or suspicious activity.</p>
+      <h2>8. Disclaimer</h2>
+      <p>The Service is provided “as is” without warranties.</p>
 
-    <h2>9. Disclaimers</h2>
-    <p>Scaaf is provided "as is" without warranties.</p>
+      <h2>9. Limitation of Liability</h2>
+      <p>
+        We are not responsible for indirect damages or third-party actions.
+      </p>
 
-    <h2>10. Liability</h2>
-    <p>
-      We are not responsible for losses resulting from AI results, Gmail API failures, or service downtime.
-    </p>
-
-    <h2>11. Governing Law</h2>
-    <p>Korean law governs these Terms.</p>
+      <h2>10. Governing Law</h2>
+      <p>These Terms are governed by the laws of the Republic of Korea.</p>
 
     <h2>12. Contact</h2>
     <p>Email: <strong>support@scaaf.day</strong></p>
-  `;
-
-  return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <div
-        className="prose prose-neutral dark:prose-invert prose-headings:font-semibold"
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
     </div>
   );
 }
