@@ -4,7 +4,7 @@ export default function GoogleOAuthDisclosure() {
     return (
       <div className="prose mx-auto px-6 py-10">
         <h1>Google OAuth Restricted Scope Disclosure</h1>
-        <p>Last updated: [날짜]</p>
+        <p>Last updated: [November 20, 2025]</p>
   
         <h2>1. Why We Request Restricted Scopes</h2>
         <p>
@@ -52,7 +52,7 @@ export default function GoogleOAuthDisclosure() {
         </p>
   
         <h2>9. Contact</h2>
-        <p>Email: [운영자 이메일]</p>
+        <p>Email: <strong>support@scaaf.day</strong></p>
       </div>
     );
   }
