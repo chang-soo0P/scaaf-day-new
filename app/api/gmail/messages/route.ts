@@ -4,58 +4,41 @@ import { GmailClient } from "@/lib/gmail-client";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const id = request.nextUrl.searchParams.get("id");
   const accessToken = request.cookies.get("gmail_access_token")?.value;
 
-  if (!accessToken || !id) {
+  if (!accessToken) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const gmailClient = new GmailClient(accessToken);
-    const full = await gmailClient.getMessage(id);
 
-    const payload = full.payload;
-    const headers = payload.headers;
+    // Gmail 리스트 가져오기 (10개)
+    const list = await gmailClient.getMessages("", 10);
+    const rawMessages = list.messages || [];
 
-    const subject = headers.find((h) => h.name === "Subject")?.value || "";
-    const from = headers.find((h) => h.name === "From")?.value || "";
-    const date = headers.find((h) => h.name === "Date")?.value || "";
-    const snippet = full.snippet || "";
+    const detailed = await Promise.all(
+      rawMessages.map(async (msg) => {
+        const full = await gmailClient.getMessage(msg.id);
 
-    const body = extractPlainTextFromPayload(payload);
+        return {
+          id: msg.id,
+          threadId: msg.threadId,
+          subject: full.payload.headers.find((h) => h.name === "Subject")?.value || "",
+          from: full.payload.headers.find((h) => h.name === "From")?.value || "",
+          date: full.payload.headers.find((h) => h.name === "Date")?.value || "",
+          snippet: full.snippet,
+          isUnread: full.labelIds?.includes("UNREAD") || false
+        };
+      })
+    );
 
-    return NextResponse.json({
-      id,
-      subject,
-      from,
-      date,
-      snippet,
-      body,
-    });
+    return NextResponse.json({ data: detailed });
   } catch (err) {
+    console.error("Gmail messages error:", err);
     return NextResponse.json(
-      { error: "Failed to fetch message" },
+      { error: "Failed to fetch messages" },
       { status: 500 }
     );
-  }
-}
-
-function extractPlainTextFromPayload(payload: any): string {
-  try {
-    if (payload.body?.data) {
-      return Buffer.from(payload.body.data, "base64").toString("utf-8");
-    }
-
-    const parts = payload.parts || [];
-    for (const part of parts) {
-      if (part.mimeType === "text/plain" && part.body?.data) {
-        return Buffer.from(part.body.data, "base64").toString("utf-8");
-      }
-    }
-
-    return "(No content)";
-  } catch {
-    return "(Failed to extract body)";
   }
 }

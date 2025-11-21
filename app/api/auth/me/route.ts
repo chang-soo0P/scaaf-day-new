@@ -6,7 +6,7 @@ export const fetchCache = "force-no-store";
 export async function GET(request: NextRequest) {
   try {
     const accessToken = request.cookies.get("gmail_access_token")?.value;
-    const userCookie = request.cookies.get("gmail_user")?.value;
+    const userCookie = request.cookies.get("user_info")?.value; // ★ 이름 통일
 
     if (!accessToken || !userCookie) {
       return NextResponse.json({ authenticated: false }, { status: 200 });
@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
       name: user.name,
       picture: user.picture,
       accessToken,
-      expiresAt: user.expiresAt,
     });
   } catch (err) {
     console.error("Auth me error:", err);
