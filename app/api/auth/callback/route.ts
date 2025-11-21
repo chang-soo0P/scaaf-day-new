@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 1) 토큰 교환
+    // ---------------------------
+    // 1) OAuth Token 교환
+    // ---------------------------
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -41,7 +43,9 @@ export async function GET(request: NextRequest) {
       throw new Error(tokens.error_description || "Token exchange failed");
     }
 
-    // 2) 사용자 정보 가져오기
+    // ---------------------------
+    // 2) UserInfo 가져오기
+    // ---------------------------
     const userResponse = await fetch(
       "https://www.googleapis.com/oauth2/v2/userinfo",
       {
@@ -53,37 +57,27 @@ export async function GET(request: NextRequest) {
 
     const userData = await userResponse.json();
 
-    const response = NextResponse.redirect(
-      `${baseUrl}/?authenticated=true`
-    );
+    // ---------------------------
+    // 3) Redirect 준비
+    // ---------------------------
+    const response = NextResponse.redirect(`${baseUrl}/?authenticated=true`);
 
-    // ----------------------------------------------------
-    // ✔ Access Token 저장
-    // ----------------------------------------------------
+    // ---------------------------
+    // ✔ A. Access Token 저장 (HttpOnly)
+    // ---------------------------
     response.cookies.set("gmail_access_token", tokens.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: tokens.expires_in,
+      maxAge: tokens.expires_in, // expires_in은 초 단위
       path: "/",
     });
 
-    // ✔ Refresh token 저장 (있을 때만)
-    if (tokens.refresh_token) {
-      response.cookies.set("gmail_refresh_token", tokens.refresh_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 30,
-        path: "/",
-      });
-    }
-
-    // ----------------------------------------------------
-    // ✔ User 정보 쿠키 저장 (client-side에서도 읽어야 하므로 httpOnly: false)
-    // ----------------------------------------------------
+    // ---------------------------
+    // ✔ B. User Info 저장 (client-side 접근 가능)
+    // ---------------------------
     response.cookies.set(
-      "gmail_user",
+      "user_info",
       JSON.stringify({
         email: userData.email,
         name: userData.name,
@@ -98,6 +92,11 @@ export async function GET(request: NextRequest) {
         path: "/",
       }
     );
+
+    // ---------------------------
+    // ❌ 삭제해야 하는 쿠키들 (사용 안 함)
+    // gmail_user / gmail_refresh_token
+    // ---------------------------
 
     return response;
   } catch (error) {
