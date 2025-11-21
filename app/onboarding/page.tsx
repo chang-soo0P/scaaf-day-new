@@ -145,7 +145,6 @@ export default function OnboardingPage() {
         email: "demo@example.com",
         name: "Demo User",
         picture: "https://via.placeholder.com/40",
-        accessToken: "mock_access_token",
         expiresAt: Date.now() + 3600000, // 1 hour from now
       }
 
@@ -179,7 +178,6 @@ export default function OnboardingPage() {
         email: "demo@example.com",
         name: "Demo User",
         picture: "https://via.placeholder.com/40",
-        accessToken: "mock_access_token",
         expiresAt: Date.now() + 3600000,
       }
 

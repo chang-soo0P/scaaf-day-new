@@ -17,7 +17,7 @@ if (authStorage) {
     
     if (authData.user?.accessToken) {
       console.log("🎫 토큰 (처음 10자):", authData.user.accessToken.substring(0, 10) + "...");
-      console.log("🎫 Mock 토큰 여부:", authData.user.accessToken === "mock_access_token");
+//      console.log("🎫 Mock 토큰 여부:", authData.user.accessToken === "mock_access_token");
     }
   } catch (error) {
     console.error("❌ 세션 스토리지 파싱 오류:", error);
