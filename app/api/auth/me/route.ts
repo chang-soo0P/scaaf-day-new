@@ -7,33 +7,25 @@ export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   try {
-    // 쿠키에서 토큰과 사용자 정보 가져오기
     const accessToken = request.cookies.get("gmail_access_token")?.value;
-    const userInfoCookie = request.cookies.get("user_info")?.value;
+    const userCookie = request.cookies.get("gmail_user")?.value; // 수정!
 
-    if (!accessToken || !userInfoCookie) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!accessToken || !userCookie) {
+      return NextResponse.json({ authenticated: false }, { status: 200 });
     }
 
-    try {
-      const userInfo = JSON.parse(userInfoCookie);
-      
-      // 토큰 만료 시간 계산 (기본 1시간)
-      const expiresAt = Date.now() + 3600000; // 1 hour from now
+    const user = JSON.parse(userCookie);
 
-      return NextResponse.json({
-        email: userInfo.email,
-        name: userInfo.name,
-        picture: userInfo.picture,
-        accessToken: accessToken,
-        expiresAt: expiresAt,
-      });
-    } catch (parseError) {
-      console.error("Failed to parse user info:", parseError);
-      return NextResponse.json({ error: "Invalid user data" }, { status: 401 });
-    }
-  } catch (error) {
-    console.error("Auth me error:", error);
-    return NextResponse.json({ error: "Auth failed" }, { status: 500 });
+    return NextResponse.json({
+      authenticated: true,
+      email: user.email,
+      name: user.name,
+      picture: user.picture,
+      accessToken: accessToken,
+      expiresAt: user.expiresAt || null, // callback에서 저장한 값 사용
+    });
+  } catch (err) {
+    console.error("Auth me error:", err);
+    return NextResponse.json({ authenticated: false }, { status: 200 });
   }
 }
