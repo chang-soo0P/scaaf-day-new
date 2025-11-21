@@ -8,28 +8,29 @@ import { GmailConnect } from "@/components/GmailConnect";
 import { useAuthStore } from "@/lib/auth-store";
 
 function HomeContent() {
-  const [isLoading, setIsLoading] = useState(true);
-  const { isAuthenticated, user, checkAuthStatus, login } = useAuthStore();
+  const { isAuthenticated, user, login, checkAuthStatus } = useAuthStore();
   const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const error = searchParams.get("error");
 
     const initialize = async () => {
       try {
-        // Google OAuth callback 후 쿠키 기반으로 사용자 정보 동기화
-        const response = await fetch("/api/auth/me", {
+        // 쿠키 기반 사용자 정보 확인
+        const res = await fetch("/api/auth/me", {
           credentials: "include",
         });
 
-        if (response.ok) {
-          const userData = await response.json();
+        const data = await res.json();
+
+        if (data.authenticated) {
           login({
-            email: userData.email,
-            name: userData.name,
-            picture: userData.picture,
-            accessToken: userData.accessToken, // cookie 기반 token 동기화
-            expiresAt: userData.expiresAt,
+            email: data.email,
+            name: data.name,
+            picture: data.picture,
+            accessToken: data.accessToken,
+            expiresAt: data.expiresAt,
           });
         } else {
           await checkAuthStatus();
@@ -39,14 +40,14 @@ function HomeContent() {
           console.error("Authentication error:", error);
         }
       } catch (err) {
-        console.error("Auth initialization error:", err);
+        console.error("Initialization error:", err);
       } finally {
         setIsLoading(false);
       }
     };
 
     initialize();
-  }, [searchParams, checkAuthStatus, login]);
+  }, [searchParams, login, checkAuthStatus]);
 
   if (isLoading) {
     return (
@@ -65,13 +66,7 @@ function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-gray-500">Loading...</div>
-        </div>
-      }
-    >
+    <Suspense fallback={<div className="min-h-screen">Loading...</div>}>
       <HomeContent />
     </Suspense>
   );

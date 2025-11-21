@@ -5,12 +5,12 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
-  // ✅ 개발/운영 환경 모두에서 동일한 base URL 사용
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000");
 
-  // ✅ 에러 또는 code 없음 → 홈페이지로 이동
   if (error) {
     return NextResponse.redirect(`${baseUrl}/?error=${error}`);
   }
@@ -20,11 +20,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // 1) 토큰 교환
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         client_id: process.env.GOOGLE_CLIENT_ID!,
         client_secret: process.env.GOOGLE_CLIENT_SECRET!,
@@ -42,63 +41,70 @@ export async function GET(request: NextRequest) {
       throw new Error(tokens.error_description || "Token exchange failed");
     }
 
-    // ✅ user info 가져오기
-    const userResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-      headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
-      },
-    });
+    // 2) 사용자 정보 가져오기
+    const userResponse = await fetch(
+      "https://www.googleapis.com/oauth2/v2/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${tokens.access_token}`,
+        },
+      }
+    );
 
     const userData = await userResponse.json();
 
-    console.log("[v0] Token scopes:", tokens.scope);
+    const response = NextResponse.redirect(
+      `${baseUrl}/?authenticated=true`
+    );
 
-    // ✅ 개발/운영 환경 모두에서 홈페이지로 리디렉션
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL ??
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-
-    const response = NextResponse.redirect(`${baseUrl}/?authenticated=true`);
-
-    // ✅ 쿠키 설정 유지
+    // ----------------------------------------------------
+    // ✔ Access Token 저장
+    // ----------------------------------------------------
     response.cookies.set("gmail_access_token", tokens.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: tokens.expires_in,
+      path: "/",
     });
 
+    // ✔ Refresh token 저장 (있을 때만)
     if (tokens.refresh_token) {
       response.cookies.set("gmail_refresh_token", tokens.refresh_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 30, // 30 days
+        maxAge: 60 * 60 * 24 * 30,
+        path: "/",
       });
     }
 
+    // ----------------------------------------------------
+    // ✔ User 정보 쿠키 저장 (client-side에서도 읽어야 하므로 httpOnly: false)
+    // ----------------------------------------------------
     response.cookies.set(
-      "user_info",
+      "gmail_user",
       JSON.stringify({
         email: userData.email,
         name: userData.name,
         picture: userData.picture,
+        expiresAt: Date.now() + tokens.expires_in * 1000,
       }),
       {
         httpOnly: false,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         maxAge: tokens.expires_in,
+        path: "/",
       }
     );
 
     return response;
   } catch (error) {
     console.error("Token exchange error:", error);
-    // ✅ 에러 시에도 홈페이지로 이동
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL ??
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-    return NextResponse.redirect(`${baseUrl}/?error=token_exchange_failed`);
+
+    return NextResponse.redirect(
+      `${baseUrl}/?error=token_exchange_failed`
+    );
   }
 }
