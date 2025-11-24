@@ -5,14 +5,12 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
-  // 운영 / 로컬 모두 대응
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
 
-  // OAuth 취소 / 오류
   if (error) {
     return NextResponse.redirect(`${baseUrl}/?error=${error}`);
   }
@@ -22,9 +20,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // ========================================================
-    // 1) OAuth Token 교환
-    // ========================================================
+    // 1) 토큰 교환
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -45,9 +41,7 @@ export async function GET(request: NextRequest) {
       throw new Error(tokens.error_description || "Token exchange failed");
     }
 
-    // ========================================================
-    // 2) 사용자 정보 가져오기
-    // ========================================================
+    // 2) 사용자 정보
     const userResponse = await fetch(
       "https://www.googleapis.com/oauth2/v2/userinfo",
       {
@@ -59,28 +53,23 @@ export async function GET(request: NextRequest) {
 
     const userData = await userResponse.json();
 
-    // ========================================================
-    // 3) Redirect 준비
-    // ========================================================
     const response = NextResponse.redirect(`${baseUrl}/?authenticated=true`);
-
     const isProd = process.env.NODE_ENV === "production";
 
-    // ========================================================
-    // ✔ A. Access Token 저장 (server-only)
-    //    → server API 라우트(/api/gmail/*)에서 읽음
-    // ========================================================
+    // 🔥 잘못된 쿠키 삭제
+    response.cookies.set("gmail_user", "", { maxAge: 0, path: "/" });
+    response.cookies.set("gmail_refresh_token", "", { maxAge: 0, path: "/" });
+
+    // A. Access Token 저장
     response.cookies.set("gmail_access_token", tokens.access_token, {
       httpOnly: true,
-      secure: isProd,       // HTTPS 필수
-      sameSite: "none",     // OAuth redirect → 반드시 none
+      secure: isProd,
+      sameSite: "lax",
       maxAge: tokens.expires_in,
       path: "/",
     });
 
-    // ========================================================
-    // ✔ B. User Info 저장 (client-accessible)
-    // ========================================================
+    // B. User Info 저장
     response.cookies.set(
       "user_info",
       JSON.stringify({
@@ -92,16 +81,11 @@ export async function GET(request: NextRequest) {
       {
         httpOnly: false,
         secure: isProd,
-        sameSite: "none",
+        sameSite: "lax",
         maxAge: tokens.expires_in,
         path: "/",
       }
     );
-
-    // ========================================================
-    // ❌ 삭제 대상 (이미 사용 안 함)
-    // gmail_user / gmail_refresh_token
-    // ========================================================
 
     return response;
   } catch (error) {
