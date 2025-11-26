@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 1) 토큰 교환
+    // ========================================================
+    // 1) OAuth Token 교환
+    // ========================================================
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -41,7 +43,9 @@ export async function GET(request: NextRequest) {
       throw new Error(tokens.error_description || "Token exchange failed");
     }
 
-    // 2) 사용자 정보
+    // ========================================================
+    // 2) 사용자 정보 가져오기
+    // ========================================================
     const userResponse = await fetch(
       "https://www.googleapis.com/oauth2/v2/userinfo",
       {
@@ -53,23 +57,33 @@ export async function GET(request: NextRequest) {
 
     const userData = await userResponse.json();
 
+    // ========================================================
+    // 3) Redirect 준비
+    // ========================================================
     const response = NextResponse.redirect(`${baseUrl}/?authenticated=true`);
+
     const isProd = process.env.NODE_ENV === "production";
 
-    // 🔥 잘못된 쿠키 삭제
+    // ========================================================
+    // 🔥 잘못된 기존 쿠키 삭제
+    // ========================================================
     response.cookies.set("gmail_user", "", { maxAge: 0, path: "/" });
     response.cookies.set("gmail_refresh_token", "", { maxAge: 0, path: "/" });
 
-    // A. Access Token 저장
+    // ========================================================
+    // ✔ A. Access Token 저장
+    // ========================================================
     response.cookies.set("gmail_access_token", tokens.access_token, {
       httpOnly: true,
-      secure: isProd,
-      sameSite: "lax",
+      secure: isProd ? true : false, // prod = HTTPS , dev = HTTP
+      sameSite: isProd ? "none" : "lax", // prod=none 필수
       maxAge: tokens.expires_in,
       path: "/",
     });
 
-    // B. User Info 저장
+    // ========================================================
+    // ✔ B. User Info 저장 (client-side에서 읽기 가능)
+    // ========================================================
     response.cookies.set(
       "user_info",
       JSON.stringify({
@@ -80,8 +94,8 @@ export async function GET(request: NextRequest) {
       }),
       {
         httpOnly: false,
-        secure: isProd,
-        sameSite: "lax",
+        secure: isProd ? true : false,
+        sameSite: isProd ? "none" : "lax",
         maxAge: tokens.expires_in,
         path: "/",
       }
