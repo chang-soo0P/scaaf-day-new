@@ -5,19 +5,22 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
-  // 운영 / 로컬 자동 분기
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ??
+  const origin =
+    request.nextUrl.origin ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
+  const hostname = request.nextUrl.hostname;
+  const isLocalhost =
+    hostname === "localhost" || hostname.startsWith("127.") || hostname === "[::1]";
 
   if (error) {
-    return NextResponse.redirect(`${baseUrl}/?error=${error}`);
+    return NextResponse.redirect(`${origin}/?error=${error}`);
   }
 
   if (!code) {
-    return NextResponse.redirect(`${baseUrl}/?error=no_code`);
+    return NextResponse.redirect(`${origin}/?error=no_code`);
   }
 
   try {
@@ -33,8 +36,7 @@ export async function GET(request: NextRequest) {
         code,
         grant_type: "authorization_code",
         redirect_uri:
-          process.env.GOOGLE_REDIRECT_URI ||
-          `${baseUrl}/api/auth/callback`,
+          process.env.GOOGLE_REDIRECT_URI || `${origin}/api/auth/callback`,
       }),
     });
 
@@ -61,9 +63,9 @@ export async function GET(request: NextRequest) {
     // ========================================================
     // 3) 리디렉트 준비
     // ========================================================
-    const response = NextResponse.redirect(`${baseUrl}/?authenticated=true`);
-
-    const isProd = process.env.NODE_ENV === "production";
+    const response = NextResponse.redirect(`${origin}/?authenticated=true`);
+    const isProd = origin.startsWith("https://");
+    const cookieDomain = isLocalhost ? undefined : hostname;
 
     // ========================================================
     // ❌ 기존 불필요 쿠키 제거
@@ -75,11 +77,12 @@ export async function GET(request: NextRequest) {
     // ✔ A. Access Token 저장 (서버 전용 쿠키)
     // ========================================================
     response.cookies.set("gmail_access_token", tokens.access_token, {
-      httpOnly: true,          // JS 접근 불가 → 보안 강화
-      secure: isProd ? true : false,   // prod=HTTPS 필수
-      sameSite: isProd ? "none" : "lax", // OAuth redirect는 prod에서 none 필수
-      maxAge: tokens.expires_in,       // 보통 3600초
-      path: "/",                       // 전체 도메인에서 사용
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      maxAge: tokens.expires_in,
+      path: "/",
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
     });
 
     // ========================================================
@@ -99,6 +102,7 @@ export async function GET(request: NextRequest) {
         sameSite: isProd ? "none" : "lax",
         maxAge: tokens.expires_in,
         path: "/",
+        ...(cookieDomain ? { domain: cookieDomain } : {}),
       }
     );
 
@@ -107,7 +111,7 @@ export async function GET(request: NextRequest) {
     console.error("Token exchange error:", error);
 
     return NextResponse.redirect(
-      `${baseUrl}/?error=token_exchange_failed`
+      `${origin}/?error=token_exchange_failed`
     );
   }
 }

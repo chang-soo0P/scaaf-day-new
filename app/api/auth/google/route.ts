@@ -8,13 +8,15 @@ export const revalidate = 0;
 export async function GET(request: NextRequest) {
   try {
     const clientId = process.env.GOOGLE_CLIENT_ID;
-    
-    // ✅ 개발/운영 환경 모두에서 동일한 base URL 로직 사용
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL ??
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
-    const redirectUri = `${baseUrl}/api/auth/callback`;
+    const origin =
+      request.nextUrl.origin ||
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000");
+
+    const redirectUri = `${origin}/api/auth/callback`;
 
     if (!clientId) {
       return NextResponse.json({ error: "Google Client ID not configured" }, { status: 500 });
