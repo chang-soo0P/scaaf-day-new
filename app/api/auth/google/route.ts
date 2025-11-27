@@ -5,18 +5,37 @@ export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 export const revalidate = 0;
 
+function isLocalHost(host: string | null) {
+  if (!host) return false;
+  return (
+    host === "localhost" ||
+    host.startsWith("localhost:") ||
+    host.startsWith("127.") ||
+    host.includes("::1")
+  );
+}
+
 export async function GET(request: NextRequest) {
   try {
     const clientId = process.env.GOOGLE_CLIENT_ID;
 
-    const origin =
-      request.nextUrl.origin ||
-      process.env.NEXT_PUBLIC_BASE_URL ||
+    const forwardedHost = request.headers.get("x-forwarded-host");
+    const host = forwardedHost ?? request.nextUrl.host;
+    const protoHeader =
+      request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol;
+    const protocol =
+      protoHeader && protoHeader.endsWith(":")
+        ? protoHeader.slice(0, -1)
+        : protoHeader ?? "https";
+
+    const normalizedBase =
+      process.env.NEXT_PUBLIC_BASE_URL ??
       (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000");
+        : `${protocol}://${host}`);
 
-    const redirectUri = `${origin}/api/auth/callback`;
+    const origin = isLocalHost(host) ? `${protocol}://${host}` : normalizedBase;
+    const redirectUri = `${origin.replace(/\/$/, "")}/api/auth/callback`;
 
     if (!clientId) {
       return NextResponse.json({ error: "Google Client ID not configured" }, { status: 500 });

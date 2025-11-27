@@ -1,27 +1,38 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+function isLocalHost(host: string | null) {
+  if (!host) return false;
+  return (
+    host === "localhost" ||
+    host.startsWith("localhost:") ||
+    host.startsWith("127.") ||
+    host.includes("::1")
+  );
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
-  // -----------------------
-  // 환경별 base URL 자동 판별
-  // -----------------------
-  const host = request.nextUrl.hostname;
-  const isLocalhost =
-    host === "localhost" ||
-    host.startsWith("127.") ||
-    host === "[::1]";
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const host = forwardedHost ?? request.nextUrl.host;
+  const protoHeader =
+    request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol;
+  const protocol =
+    protoHeader && protoHeader.endsWith(":")
+      ? protoHeader.slice(0, -1)
+      : protoHeader ?? "https";
 
-  const origin =
-    isLocalhost
-      ? "http://localhost:3000"
-      : `https://${request.nextUrl.host}`;
+  const localOrigin = `${protocol}://${host}`;
+  const fallbackOrigin =
+    process.env.NEXT_PUBLIC_BASE_URL ??
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : localOrigin);
 
-  // -----------------------
-  // 오류 처리
-  // -----------------------
+  const origin = isLocalHost(host) ? localOrigin : fallbackOrigin;
+
   if (error) {
     return NextResponse.redirect(`${origin}/?error=${error}`);
   }
@@ -30,10 +41,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/?error=no_code`);
   }
 
-  try {
-    // ======================================================
-    // 1) Google OAuth Token 교환
-    // ======================================================
+    try {
+      // ======================================================
+      // 1) Google OAuth Token 교환
+      // ======================================================
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -43,8 +54,8 @@ export async function GET(request: NextRequest) {
         code,
         grant_type: "authorization_code",
         redirect_uri:
-          process.env.GOOGLE_REDIRECT_URI ||
-          `${origin}/api/auth/callback`,
+            process.env.GOOGLE_REDIRECT_URI ||
+            `${origin}/api/auth/callback`,
       }),
     });
 
@@ -71,13 +82,13 @@ export async function GET(request: NextRequest) {
     // ======================================================
     // 3) Redirect 설정
     // ======================================================
-    const response = NextResponse.redirect(`${origin}/?authenticated=true`);
+    const response = NextResponse.redirect(
+      `${origin}/?authenticated=true`,
+    );
 
-    const isProd = origin.startsWith("https://");
-
-    // SameSite 설정:
-    // Google OAuth redirect는 반드시 SameSite=None 이어야 쿠키가 저장됨
-    const sameSite = isProd ? "none" : "lax";
+    const isHttps = origin.startsWith("https://");
+    const sameSite = isHttps ? "none" : "lax";
+    const cookieDomain = isLocalHost(host) ? undefined : new URL(origin).hostname;
 
     // -----------------------------
     // ❌ 잘못된 이전 쿠키 제거
@@ -90,10 +101,11 @@ export async function GET(request: NextRequest) {
     // ======================================================
     response.cookies.set("gmail_access_token", tokens.access_token, {
       httpOnly: true,
-      secure: isProd,
+      secure: isHttps,
       sameSite,
       maxAge: tokens.expires_in,
       path: "/",
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
     });
 
     // ======================================================
@@ -109,10 +121,11 @@ export async function GET(request: NextRequest) {
       }),
       {
         httpOnly: false,
-        secure: isProd,
+        secure: isHttps,
         sameSite,
         maxAge: tokens.expires_in,
         path: "/",
+        ...(cookieDomain ? { domain: cookieDomain } : {}),
       }
     );
 
