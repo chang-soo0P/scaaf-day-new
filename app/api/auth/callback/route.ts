@@ -24,14 +24,20 @@ export async function GET(request: NextRequest) {
       ? protoHeader.slice(0, -1)
       : protoHeader ?? "https";
 
-  const localOrigin = `${protocol}://${host}`;
-  const fallbackOrigin =
-    process.env.NEXT_PUBLIC_BASE_URL ??
-    (process.env.VERCEL_URL
+  const derivedOrigin = host ? `${protocol}://${host}` : undefined;
+  const configuredOrigin =
+    process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
-      : localOrigin);
+      : process.env.NEXT_PUBLIC_BASE_URL;
 
-  const origin = isLocalHost(host) ? localOrigin : fallbackOrigin;
+  const originCandidate =
+    derivedOrigin ??
+    configuredOrigin ??
+    (host ? `${protocol}://${host}` : "http://localhost:3000");
+
+  const origin = isLocalHost(host)
+    ? `${protocol}://${host}`
+    : originCandidate;
 
   if (error) {
     return NextResponse.redirect(`${origin}/?error=${error}`);
