@@ -12,12 +12,14 @@ function HomeContent() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
 
+  // -------------------------------------------------
+  // ① 초기 쿠키 기반 로그인 상태 확인
+  // -------------------------------------------------
   useEffect(() => {
     const error = searchParams.get("error");
 
     const initialize = async () => {
       try {
-        // 쿠키 기반 사용자 정보 확인
         const res = await fetch("/api/auth/me", {
           credentials: "include",
         });
@@ -49,6 +51,25 @@ function HomeContent() {
     initialize();
   }, [searchParams, login, checkAuthStatus]);
 
+  // -------------------------------------------------
+  // ② 로그인 후 Gmail → Supabase 백업 자동 트리거
+  // -------------------------------------------------
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log("[Home] User authenticated → Triggering Gmail save messages");
+
+      fetch("/api/gmail/save-messages", {
+        method: "GET",
+        credentials: "include",
+      }).catch((err) => {
+        console.error("[Home] Failed to save messages:", err);
+      });
+    }
+  }, [isAuthenticated]);
+
+  // -------------------------------------------------
+  // Loading 화면
+  // -------------------------------------------------
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -57,6 +78,9 @@ function HomeContent() {
     );
   }
 
+  // -------------------------------------------------
+  // UI 표시 (로그인 여부에 따라)
+  // -------------------------------------------------
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
       {isAuthenticated && user ? <EmailDashboard /> : <GmailConnect />}
