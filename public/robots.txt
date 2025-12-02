@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://scaaf.day/sitemap.xml
