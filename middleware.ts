@@ -1,27 +1,57 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(req: NextRequest) {
-  const url = req.nextUrl;
+// Production domain ONLY
+const PROD_DOMAIN = "scaaf.day";
 
-  // API, static files, OAuth callback 등은 rewrite 금지
+export function middleware(req: NextRequest) {
+  const url = req.nextUrl.clone();
+  const { pathname, hostname } = url;
+
+  // 🔒 Only apply Coming Soon on production domain
+  const isProduction = hostname === PROD_DOMAIN;
+
+  // Allow API routes, assets, and static files
+  const isApiRoute = pathname.startsWith("/api");
+  const isStaticFile =
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/static") ||
+    pathname.includes("favicon") ||
+    pathname.includes(".png") ||
+    pathname.includes(".jpg") ||
+    pathname.includes(".svg");
+
+  // ⛔ If not production → do NOTHING (dev & preview should work normally)
+  if (!isProduction) {
+    return NextResponse.next();
+  }
+
+  // Allow viewing /coming-soon itself
+  if (pathname.startsWith("/coming-soon")) {
+    return NextResponse.next();
+  }
+
+  // ⛔ Allow terms/privacy/oauth pages for Google verification
   if (
-    url.pathname.startsWith("/api") ||
-    url.pathname.startsWith("/_next") ||
-    url.pathname.startsWith("/favicon") ||
-    url.pathname.startsWith("/google") ||
-    url.pathname === "/coming-soon"
+    pathname.startsWith("/terms") ||
+    pathname.startsWith("/privacy") ||
+    pathname.startsWith("/google-oauth-disclosure")
   ) {
     return NextResponse.next();
   }
 
-  // 모든 페이지를 coming-soon 으로 리라이트
-  const comingSoon = new URL("/coming-soon", req.url);
-  return NextResponse.rewrite(comingSoon);
+  // Allow static/API
+  if (isApiRoute || isStaticFile) {
+    return NextResponse.next();
+  }
+
+  // ✅ Force coming soon page on production
+  url.pathname = "/coming-soon";
+  return NextResponse.rewrite(url);
 }
 
 export const config = {
   matcher: [
-    "/((?!api|_next|favicon|google|coming-soon).*)",
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };
